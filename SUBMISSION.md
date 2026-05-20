@@ -16,8 +16,8 @@ Snap any Indonesian receipt — Indomaret, GoFood, SPBU, café — and Nota read
 ## Live demo / proof links
 
 - **Live demo:** https://nota-receipt.netlify.app  <!-- update after Netlify deploy -->
-- **GitHub repo:** https://github.com/<3rd-handle>/nota  <!-- update -->
-- **Architecture write-up:** in-app at `/how-it-works`, plus [`ARCHITECTURE.md`](https://github.com/<3rd-handle>/nota/blob/main/ARCHITECTURE.md)
+- **GitHub repo:** https://github.com/imanboeid/nota
+- **Architecture write-up:** in-app at `/how-it-works`, plus [`ARCHITECTURE.md`](https://github.com/imanboeid/nota/blob/master/ARCHITECTURE.md)
 - **Sample ledger:** https://nota-receipt.netlify.app/ledger
 
 ## Project description (form field 04 — fits 1,200 char limit)
@@ -35,7 +35,7 @@ Core flow — two MiMo models per scan, ~3 seconds end-to-end:
 Nota uses all three MiMo families per workflow — disable any one and the product visibly degrades. Per receipt: ~1.2K vision + ~520 reasoning tokens. Per week: ~14.5K tokens + 600 TTS chars per active user. Recurring daily load — 5–15 scans/day per user across millions of Indonesian smartphones is realistic, not aspirational.
 
 Live: https://nota-receipt.netlify.app
-Repo: https://github.com/<3rd-handle>/nota
+Repo: https://github.com/imanboeid/nota
 ```
 
 (~1,180 characters. URLs included for reviewer eyeballs.)
@@ -65,8 +65,8 @@ Repo: https://github.com/<3rd-handle>/nota
 ## Team & contact
 
 - **[Your name]** — full-stack engineer, Bekasi.
-- Email: `<3rd-email>@gmail.com`
-- GitHub: https://github.com/<3rd-handle>
+- Email: `imanboepat@gmail.com`
+- GitHub: https://github.com/imanboeid
 
 ---
 
