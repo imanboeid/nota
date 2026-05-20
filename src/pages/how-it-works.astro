@@ -1,0 +1,174 @@
+---
+import Layout from '../layouts/Layout.astro';
+
+const stages = [
+  {
+    n: '01',
+    name: 'See',
+    model: 'mimo-v2.5-vision',
+    blurb:
+      'A photographed receipt becomes structured JSON. The system prompt tells the vision model to handle skewed angles, mixed Bahasa/English text, thumbs in frame, and to NEVER guess prices it cannot read.',
+    detail: '~1.6s · ~1.2K vision tokens'
+  },
+  {
+    n: '02',
+    name: 'Coach',
+    model: 'mimo-v2.5-reasoning',
+    blurb:
+      'The structured receipt is fed to a coach prompt that returns a category, an anomaly flag (ok / watch / spike), and a single warm Bahasa Indonesia sentence. The output schema is tiny on purpose — every field has a clear UI use.',
+    detail: '~1.1s · ~520 reasoning tokens'
+  },
+  {
+    n: '03',
+    name: 'Persist',
+    model: 'client-side ledger',
+    blurb:
+      'The parsed receipt is appended to a ledger that lives in the user\'s browser only. No account, no server database — refreshing your tab is the only "delete" you ever need.',
+    detail: 'localStorage / IndexedDB'
+  },
+  {
+    n: '04',
+    name: 'Speak',
+    model: 'mimo-v2.5-tts',
+    blurb:
+      'On Sunday mornings, the reasoning model writes a 60-second recap script — total spend, top categories, one win, one watch — and the TTS model reads it aloud in a calm Indonesian voice.',
+    detail: '~3.8s · ~600 chars / week'
+  }
+];
+
+const safetyRails = [
+  { k: 'No data leaves your device.',  v: 'Receipts live only in the browser tab that scanned them. No login, no cloud sync, no analytics pixel.' },
+  { k: 'No moralising.',                v: 'Insights describe what happened, not what you "should" do. The system prompt explicitly forbids judgement.' },
+  { k: 'Honest about token cost.',      v: 'Every receipt page shows the exact MiMo tokens it cost to produce. Nothing hidden.' },
+  { k: 'Bahasa-first, by design.',      v: 'The coach prompt is Bahasa-only. English-translated Indonesian is rejected at the prompt layer.' }
+];
+
+const tokens = [
+  { stage: 'Vision OCR',          usage: '~1,200 / receipt',     model: 'mimo-v2.5-vision' },
+  { stage: 'Coach',               usage: '~520 / receipt',       model: 'mimo-v2.5-reasoning' },
+  { stage: 'Weekly recap (TTS)',  usage: '~600 chars / week',    model: 'mimo-v2.5-tts' }
+];
+---
+
+<Layout title="How Nota works">
+  <section class="mx-auto max-w-5xl px-5 pb-20 pt-12">
+    <div class="text-[11px] font-mono uppercase tracking-[0.16em] text-ink-300">
+      How Nota works
+    </div>
+    <h1 class="mt-2 max-w-3xl h-display text-4xl sm:text-5xl">
+      Three Xiaomi MiMo models, one minute of your day.
+    </h1>
+    <p class="mt-5 max-w-2xl text-ink-500">
+      Every receipt you photograph is processed by a deterministic four-stage
+      pipeline. It is short on purpose, traceable on purpose, and observable
+      on purpose — every output is auditable from the ledger view.
+    </p>
+
+    <ol class="mt-12 space-y-4">
+      {stages.map((s) => (
+        <li class="grid gap-5 rounded-2xl border rule bg-white p-6 shadow-edge sm:grid-cols-[110px_1fr_180px]">
+          <div class="num text-5xl font-semibold tracking-tightest text-ink-300">{s.n}</div>
+          <div>
+            <div class="font-display text-xl font-semibold tracking-tight text-ink-800">{s.name}</div>
+            <p class="mt-2 max-w-md text-sm text-ink-500">{s.blurb}</p>
+          </div>
+          <div class="self-start text-right">
+            <div class="rounded-md bg-bone-100 px-3 py-1.5 font-mono text-[11px] font-medium uppercase tracking-[0.14em] text-ink-500">
+              {s.model}
+            </div>
+            <div class="mt-2 num text-xs text-ink-300">{s.detail}</div>
+          </div>
+        </li>
+      ))}
+    </ol>
+
+    <section class="mt-16">
+      <h2 class="font-display text-2xl font-semibold tracking-tight text-ink-800">
+        Per-receipt footprint
+      </h2>
+      <p class="mt-2 max-w-2xl text-ink-500">
+        Each scan exercises both Vision and Reasoning. TTS is amortised across
+        a week of scans, hitting the platform once per Sunday.
+      </p>
+
+      <div class="mt-6 grid gap-4 md:grid-cols-3">
+        {tokens.map((t) => (
+          <div class="pop p-5">
+            <div class="text-[11px] font-mono uppercase tracking-[0.14em] text-ink-300">{t.stage}</div>
+            <div class="mt-2 num text-3xl font-semibold tracking-tightest text-ink-800">
+              {t.usage.split(' ')[0]}
+            </div>
+            <div class="mt-1 text-xs text-ink-400">{t.usage.split(' ').slice(1).join(' ')}</div>
+            <div class="mt-4 rounded-md bg-bone-100 px-3 py-1.5 font-mono text-[11px] font-medium uppercase tracking-[0.14em] text-ink-500">
+              {t.model}
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <div class="mt-8 rounded-2xl border rule bg-white p-6">
+        <p class="text-sm text-ink-500">
+          At launch (10,000 active users × 8 receipts / day), Nota generates
+          roughly <span class="font-mono font-semibold text-ink-800">96M vision tokens, 41M reasoning tokens, and 6M TTS characters per week</span>
+          on the MiMo platform — predictable, recurring, multi-family. This is
+          the kind of usage the 100T program is calibrated for.
+        </p>
+      </div>
+    </section>
+
+    <section class="mt-16">
+      <h2 class="font-display text-2xl font-semibold tracking-tight text-ink-800">
+        Safety & privacy rails
+      </h2>
+      <div class="mt-6 grid gap-4 md:grid-cols-2">
+        {safetyRails.map((r) => (
+          <div class="pop p-5">
+            <div class="font-display text-base font-semibold text-ink-800">{r.k}</div>
+            <p class="mt-2 text-sm text-ink-500">{r.v}</p>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <section class="mt-16 rounded-2xl border rule bg-ink-800 p-8 text-bone-50">
+      <div class="text-[11px] font-mono uppercase tracking-[0.16em] text-lime-accent">
+        In production
+      </div>
+      <h2 class="mt-2 max-w-2xl font-display text-3xl font-semibold tracking-tight">
+        One MIMO_API_KEY in. One smart receipt out.
+      </h2>
+      <p class="mt-4 max-w-2xl text-bone-200">
+        Switching Nota from demo mode (seed receipts only) to live mode is a
+        single environment variable. The pipeline is unchanged.
+      </p>
+
+      <pre class="mt-5 overflow-auto rounded-xl border border-white/10 bg-black/40 p-4 font-mono text-xs leading-relaxed text-bone-100"><code>{`const mimo = new OpenAI({
+  apiKey: process.env.MIMO_API_KEY,
+  baseURL: 'https://platform.xiaomimimo.com/v1'
+});
+
+// Stage 1 — vision
+const ocr = await mimo.chat.completions.create({
+  model: 'mimo-v2.5-vision',
+  response_format: { type: 'json_object' },
+  messages: [
+    { role: 'system', content: VISION_OCR_SYSTEM },
+    { role: 'user',   content: [
+      { type: 'text',      text: 'Extract...' },
+      { type: 'image_url', image_url: { url: receiptDataUrl } }
+    ]}
+  ]
+});
+
+// Stage 2 — reasoning coach
+const coach = await mimo.chat.completions.create({
+  model: 'mimo-v2.5-reasoning',
+  response_format: { type: 'json_object' },
+  messages: [
+    { role: 'system', content: COACH_SYSTEM },
+    { role: 'user',   content: JSON.stringify(ocr) }
+  ]
+});`}</code></pre>
+    </section>
+  </section>
+</Layout>

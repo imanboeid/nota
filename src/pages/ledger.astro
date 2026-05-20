@@ -1,0 +1,119 @@
+---
+import Layout from '../layouts/Layout.astro';
+import ReceiptCard from '../components/ReceiptCard.astro';
+import { SEED_RECEIPTS } from '../lib/seed';
+import { CATEGORY_META, formatIDR, type Receipt } from '../lib/types';
+
+const total = SEED_RECEIPTS.reduce((s, r) => s + r.total, 0);
+
+// Group totals by category for the bar chart.
+const byCategory = SEED_RECEIPTS.reduce<Record<Receipt['category'], number>>(
+  (acc, r) => {
+    acc[r.category] = (acc[r.category] ?? 0) + r.total;
+    return acc;
+  },
+  {} as Record<Receipt['category'], number>
+);
+const maxAmount = Math.max(1, ...Object.values(byCategory));
+const sortedCats = Object.entries(byCategory).sort((a, b) => b[1] - a[1]);
+
+const tokenTotals = SEED_RECEIPTS.reduce(
+  (acc, r) => ({ vision: acc.vision + r.tokens.vision, reasoning: acc.reasoning + r.tokens.reasoning }),
+  { vision: 0, reasoning: 0 }
+);
+---
+
+<Layout title="Ledger — Nota">
+  <section class="mx-auto max-w-6xl px-5 pb-20 pt-12">
+    <div class="flex flex-wrap items-end justify-between gap-4">
+      <div>
+        <div class="text-[11px] font-mono uppercase tracking-[0.16em] text-ink-300">
+          Ledger · this week
+        </div>
+        <h1 class="mt-2 h-display text-4xl sm:text-5xl">
+          {formatIDR(total)}
+        </h1>
+        <p class="mt-2 text-sm text-ink-400">
+          {SEED_RECEIPTS.length} receipts seen by Nota this week.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-2 gap-4 text-right">
+        <div class="pop px-5 py-3">
+          <div class="text-[11px] font-mono uppercase tracking-[0.16em] text-ink-300">
+            Vision tokens
+          </div>
+          <div class="mt-0.5 num text-xl font-semibold text-ink-800">
+            {tokenTotals.vision.toLocaleString()}
+          </div>
+        </div>
+        <div class="pop px-5 py-3">
+          <div class="text-[11px] font-mono uppercase tracking-[0.16em] text-ink-300">
+            Reasoning tokens
+          </div>
+          <div class="mt-0.5 num text-xl font-semibold text-ink-800">
+            {tokenTotals.reasoning.toLocaleString()}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Category breakdown ─────────────────────────────────────────────── -->
+    <div class="pop mt-10 p-6">
+      <div class="text-[11px] font-mono uppercase tracking-[0.16em] text-ink-300">
+        Spending by category
+      </div>
+      <ul class="mt-5 space-y-3.5">
+        {sortedCats.map(([cat, amount]) => {
+          const meta = CATEGORY_META[cat as Receipt['category']];
+          const pct = Math.round((amount / total) * 100);
+          const width = Math.max(4, Math.round((amount / maxAmount) * 100));
+          return (
+            <li>
+              <div class="flex items-center justify-between text-sm">
+                <span class="inline-flex items-center gap-2">
+                  <span aria-hidden="true">{meta.emoji}</span>
+                  <span class="font-medium text-ink-700">{meta.label}</span>
+                  <span class="text-[11px] text-ink-300">{pct}%</span>
+                </span>
+                <span class="num text-ink-700">{formatIDR(amount)}</span>
+              </div>
+              <div class="mt-2 h-2 overflow-hidden rounded-full bg-bone-100">
+                <div class="h-full bg-ink-800" style={`width:${width}%`}></div>
+              </div>
+            </li>
+          );
+        })}
+      </ul>
+    </div>
+
+    <!-- ── Receipts ───────────────────────────────────────────────────────── -->
+    <h2 class="mt-12 h-display text-2xl">All receipts</h2>
+    <div class="mt-5 grid gap-5 md:grid-cols-2">
+      {SEED_RECEIPTS.map((r) => <ReceiptCard receipt={r} variant="full" />)}
+    </div>
+
+    <!-- ── Recap callout ──────────────────────────────────────────────────── -->
+    <div class="pop mt-12 grid gap-6 p-6 sm:grid-cols-[1fr_auto] sm:items-center">
+      <div>
+        <div class="text-[11px] font-mono uppercase tracking-[0.16em] text-ink-300">
+          Sunday · weekly audio recap
+        </div>
+        <h3 class="mt-1 font-display text-xl font-semibold text-ink-800">
+          Hear how your week went, in 60 seconds.
+        </h3>
+        <p class="mt-2 max-w-md text-sm text-ink-500">
+          Every Sunday morning, <span class="font-mono">mimo-v2.5-tts</span>
+          reads you a calm Bahasa Indonesia summary of where the week's money
+          went, what was healthy, what to watch.
+        </p>
+      </div>
+      <a
+        href="/scan"
+        class="rounded-md bg-ink-800 px-4 py-2.5 text-sm font-semibold text-bone-50 transition hover:bg-ink-700"
+      >
+        Add a receipt first →
+      </a>
+    </div>
+  </section>
+</Layout>

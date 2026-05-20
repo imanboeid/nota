@@ -1,0 +1,24 @@
+---
+interface Props {
+  size?: number;
+}
+const { size = 28 } = Astro.props;
+---
+
+<svg
+  width={size}
+  height={size}
+  viewBox="0 0 32 32"
+  fill="none"
+  xmlns="http://www.w3.org/2000/svg"
+  aria-hidden="true"
+>
+  <!-- A receipt with a folded corner; the inner stripe is the lime accent. -->
+  <rect x="6" y="3" width="20" height="26" rx="3" fill="#0a0a09" />
+  <path d="M22 3 L26 7 V3 Z" fill="#1c1b19" />
+  <rect x="9.5" y="9" width="9" height="2" rx="1" fill="#c4f23a" />
+  <rect x="9.5" y="13" width="13" height="1.5" rx="0.75" fill="#fafaf7" opacity="0.85" />
+  <rect x="9.5" y="16" width="11" height="1.5" rx="0.75" fill="#fafaf7" opacity="0.6" />
+  <rect x="9.5" y="19" width="13" height="1.5" rx="0.75" fill="#fafaf7" opacity="0.6" />
+  <rect x="9.5" y="22.5" width="7" height="2" rx="1" fill="#c4f23a" />
+</svg>

@@ -1,0 +1,23 @@
+---
+import Layout from '../layouts/Layout.astro';
+import ReceiptScanner from '../components/ReceiptScanner.tsx';
+---
+
+<Layout title="Scan a receipt — Nota">
+  <section class="mx-auto max-w-6xl px-5 pb-20 pt-12">
+    <div class="text-[11px] font-mono uppercase tracking-[0.16em] text-ink-300">
+      Scan a receipt
+    </div>
+    <h1 class="mt-2 h-display text-4xl sm:text-5xl">
+      Drop a struk. Get a smart line back.
+    </h1>
+    <p class="mt-4 max-w-2xl text-ink-500">
+      Nota uses two Xiaomi MiMo models per scan — vision to read, reasoning to
+      coach. The pipeline runs entirely server-side; nothing is stored.
+    </p>
+
+    <div class="mt-10">
+      <ReceiptScanner client:load />
+    </div>
+  </section>
+</Layout>

@@ -1,0 +1,44 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    color-scheme: light;
+    --rule: rgba(10, 10, 9, 0.07);
+  }
+  html {
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+  }
+  body {
+    background-color: theme('colors.bone.50');
+  }
+  ::selection {
+    background-color: theme('colors.lime.accent');
+    color: theme('colors.ink.800');
+  }
+}
+
+@layer components {
+  .rule {
+    border-color: var(--rule);
+  }
+  .chip {
+    @apply inline-flex items-center gap-1.5 rounded-md border rule bg-white px-2 py-0.5 text-[11px] font-medium text-ink-500;
+  }
+  .pop {
+    @apply rounded-2xl border rule bg-white shadow-edge;
+  }
+  .num {
+    @apply font-mono tabular-nums tracking-tight;
+  }
+  .h-display {
+    @apply font-display font-semibold tracking-tightest text-ink-800;
+  }
+  /* The bright-yellow "live" dot used in the header to signal demo mode. */
+  .live-dot {
+    @apply inline-block h-1.5 w-1.5 rounded-full bg-lime-accent;
+    box-shadow: 0 0 0 3px rgba(196, 242, 58, 0.25);
+  }
+}
